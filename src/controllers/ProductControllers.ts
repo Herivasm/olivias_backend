@@ -58,6 +58,8 @@ export class ProductController {
             product.productName = req.body.productName
             product.price = req.body.price
             product.description = req.body.description
+            product.imageUrl = req.body.imageUrl
+            product.category = req.body.category
 
             await product.save()
             res.send('Producto actualizado')
