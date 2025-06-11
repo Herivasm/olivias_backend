@@ -9,7 +9,7 @@ const orderStatus = {
 export type OrderStatus = typeof orderStatus[keyof typeof orderStatus]
 
 interface OrderItem {
-    product: PopulatedDoc<IProduct>[]
+    product: PopulatedDoc<IProduct>
     quantity: number
     unitPrice: number
 }
