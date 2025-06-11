@@ -15,8 +15,7 @@ export class OrderController {
             const orderNumber = await generateOrderNumber()
 
             const total = products.reduce((acc: number, item: any) => {
-                acc + item.quantity * item.unitPrice
-                return
+                return acc + item.quantity * item.unitPrice
             }, 0)
 
             const newOrder = new Order({
@@ -44,10 +43,10 @@ export class OrderController {
     }
 
     static getOrderById = async (req: Request, res: Response) => {
-        const { id } = req.params
+        const { orderId } = req.params
 
         try {
-            const order = await Order.findById(id).populate('products.product')
+            const order = await Order.findById(orderId).populate('products.product')
 
             if (!order) {
                 const error = new Error('Orden no encontrada')
@@ -63,10 +62,10 @@ export class OrderController {
     }
 
     static updateOrder = async (req: Request, res: Response) => {
-        const { id } = req.params
+        const { orderId } = req.params
 
         try {
-            const order = await Order.findById(id)
+            const order = await Order.findById(orderId)
 
             if (!order) {
                 const error = new Error('Orden no encontrada')
@@ -75,6 +74,10 @@ export class OrderController {
             }
 
             const { products, notes, status } = req.body
+
+            if (status && (status === 'pending' || status === 'paid')) {
+                order.status = status
+            }
 
             if (products) {
                 if (!Array.isArray(products) || products.length === 0) {
@@ -106,10 +109,10 @@ export class OrderController {
     }
 
     static deleteOrder = async (req: Request, res: Response) => {
-        const { id } = req.params
+        const { orderId } = req.params
 
         try {
-            const order = await Order.findById(id)
+            const order = await Order.findById(orderId)
 
             if (!order) {
                 const error = new Error('Orden no encontrada')
