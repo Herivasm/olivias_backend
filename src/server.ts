@@ -14,5 +14,6 @@ app.use(express.json())
 // Routes
 app.use('/api/products', productRoutes)
 app.use('/api/suppliers', supplierRoutes)
+app.use('/api/supplies', supplyRoutes)
 
 export default app
