@@ -8,6 +8,13 @@ const orderStatus = {
 
 export type OrderStatus = typeof orderStatus[keyof typeof orderStatus]
 
+const paymentMethod = {
+    CASH: 'cash',
+    TRANSACTION: 'transaction'
+} as const
+
+export type OrderPaymentMethod = typeof paymentMethod[keyof typeof paymentMethod]
+
 interface OrderItem {
     product: PopulatedDoc<IProduct>
     quantity: number
@@ -18,7 +25,8 @@ export interface IOrder extends Document {
     orderNumber: string
     notes?: string
     total: number
-    products: OrderItem[]
+    products: OrderItem[],
+    paymentMethod: OrderPaymentMethod,
     status: OrderStatus
 }
 
@@ -60,6 +68,10 @@ const OrderSchema: Schema = new Schema({
         type: String,
         enum: Object.values(orderStatus),
         default: orderStatus.PENDING
+    },
+    paymentMethod: {
+        type: String,
+        enum: Object.values(paymentMethod),
     }
 }, { timestamps: true })
 
