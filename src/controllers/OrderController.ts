@@ -3,33 +3,38 @@ import Order from "../models/Order";
 import { generateOrderNumber } from "../utils/generateOrderNumber";
 
 export class OrderController {
-    static createOrder = async (req: Request, res: Response) => {
+    static createOrder = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { notes, products } = req.body
+            const { notes, products, paymentMethod } = req.body
 
             if (!Array.isArray(products) || products.length === 0) {
                 res.status(400).json({ error: 'Debes incluir al menos un producto' })
                 return
             }
 
+            if (!paymentMethod || !['cash', 'transaction'].includes(paymentMethod)) {
+                res.status(400).json({ error: 'Método de pago inválido' })
+                return
+            }
+
             const orderNumber = await generateOrderNumber()
 
-            const total = products.reduce((acc: number, item: any) => {
-                return acc + item.quantity * item.unitPrice
-            }, 0)
+            const total = products.reduce((acc: number, item: any) => acc + item.quantity * item.unitPrice, 0)
 
             const newOrder = new Order({
                 orderNumber,
                 notes,
                 products,
                 total,
+                paymentMethod
             })
 
             await newOrder.save()
-            res.send('Orden creada')
+            res.status(201).json({ message: 'Orden creada', order: newOrder })
 
         } catch (error) {
-            console.log(error);
+            console.error(error);
+            res.status(500).json({ error: 'Error al crear la orden' })
         }
     }
 
@@ -61,22 +66,33 @@ export class OrderController {
         }
     }
 
-    static updateOrder = async (req: Request, res: Response) => {
+    static updateOrder = async (req: Request, res: Response): Promise<void> => {
         const { orderId } = req.params
 
         try {
             const order = await Order.findById(orderId)
 
             if (!order) {
-                const error = new Error('Orden no encontrada')
-                res.status(404).json({ error: error.message })
+                res.status(404).json({ error: 'Orden no encontrada' })
                 return
             }
 
-            const { products, notes, status } = req.body
+            const { products, notes, status, paymentMethod } = req.body
 
-            if (status && (status === 'pending' || status === 'paid')) {
+            if (status) {
+                if (!['pending', 'paid'].includes(status)) {
+                    res.status(400).json({ error: 'Estado inválido' })
+                    return
+                }
                 order.status = status
+            }
+
+            if (paymentMethod) {
+                if (!['cash', 'transaction'].includes(paymentMethod)) {
+                    res.status(400).json({ error: 'Método de pago inválido' })
+                    return
+                }
+                order.paymentMethod = paymentMethod
             }
 
             if (products) {
@@ -86,27 +102,22 @@ export class OrderController {
                 }
 
                 order.products = products
-                order.total = products.reduce((acc: number, item: any) => {
-                    acc + item.quantity * item.unitPrice
-                    return
-                }, 0)
+                order.total = products.reduce((acc: number, item: any) => acc + item.quantity * item.unitPrice, 0)
             }
 
             if (notes !== undefined) {
                 order.notes = notes
             }
 
-            if (status) {
-                order.status = status
-            }
-
             await order.save()
-            res.send('Orden actualizada')
+            res.status(200).json({ message: 'Orden actualizada', order })
 
         } catch (error) {
-            console.log(error);
+            console.error(error)
+            res.status(500).json({ error: 'Error al actualizar la orden' })
         }
     }
+
 
     static deleteOrder = async (req: Request, res: Response) => {
         const { orderId } = req.params
