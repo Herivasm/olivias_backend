@@ -2,6 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
 import productRoutes from "./routes/productRoutes";
+import orderRoutes from "./routes/orderRoutes";
+import supplierRoutes from "./routes/supplierRoutes";
 import supplierRoutes from "./routes/supplierRoutes";
 
 dotenv.config()
@@ -13,6 +15,7 @@ app.use(express.json())
 
 // Routes
 app.use('/api/products', productRoutes)
+app.use("/api/orders", orderRoutes)
 app.use('/api/suppliers', supplierRoutes)
 app.use('/api/supplies', supplyRoutes)
 
