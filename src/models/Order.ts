@@ -1,14 +1,14 @@
 import mongoose, { Document, PopulatedDoc, Schema, Types } from "mongoose";
 import { IProduct } from "./Product";
 
-const orderStatus = {
+export const orderStatus = {
     PENDING: 'pending',
     PAID: 'paid',
 } as const
 
 export type OrderStatus = typeof orderStatus[keyof typeof orderStatus]
 
-const paymentMethod = {
+export const paymentMethod = {
     CASH: 'cash',
     TRANSACTION: 'transaction'
 } as const
@@ -71,6 +71,7 @@ const OrderSchema: Schema = new Schema({
     },
     paymentMethod: {
         type: String,
+        required: true,
         enum: Object.values(paymentMethod),
     }
 }, { timestamps: true })
