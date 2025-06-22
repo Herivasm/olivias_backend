@@ -24,7 +24,7 @@ const SupplySchema: Schema = new Schema({
         min: 0
     },
     supplier: {
-        type: Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Supplier'
     }
 })

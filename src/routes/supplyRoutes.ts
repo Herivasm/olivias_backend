@@ -25,7 +25,9 @@ router.get('/:supplyId',
     param('supplyId')
         .isMongoId().withMessage('ID no válido'),
     handleInputErrors,
-    SupplyController.getSupplyById
+    (req, res, next) => {
+        SupplyController.getSupplyById(req, res).catch(next);
+    }
 )
 
 router.put('/:supplyId',

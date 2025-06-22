@@ -28,19 +28,14 @@ export class SupplyController {
         const { supplyId } = req.params
 
         try {
-            const supply = await Supply.findById(supplyId)
-
-            if (!supply) {
-                const error = new Error('Insumo no encontrado')
-                res.status(404).json({ error: error.message })
-                return
-            }
-
+            const supply = await Supply.findById(supplyId).populate('supplier')
+            if (!supply) return res.status(404).json({ error: 'Insumo no encontrado' })
             res.json(supply)
-
         } catch (error) {
-            console.log(error);
+            console.error(error)
+            res.status(500).json({ error: 'Error al obtener el insumo' })
         }
+
     }
 
     static updateSupply = async (req: Request, res: Response) => {
