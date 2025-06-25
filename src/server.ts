@@ -12,9 +12,9 @@ connectDB()
 
 const app = express()
 
-// Habilita CORS para que el frontend pueda comunicarse con el backend
+
 app.use(cors({
-  origin: "http://localhost:5173" // reemplaza si usas otro puerto para el front
+  origin: "http://localhost:5173" 
 }))
 
 app.use(express.json())
