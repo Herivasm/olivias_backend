@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { body, param } from "express-validator";
+import { body, param, query } from "express-validator";
 import { OrderController } from "../controllers/OrderController";
 import { handleInputErrors } from "../middleware/validation";
 import { orderStatus, paymentMethod } from "../models/Order";
@@ -25,6 +25,12 @@ router.post('/',
     handleInputErrors,
     OrderController.createOrder
 )
+
+router.get('/by-date',
+    query('date').isISO8601().withMessage('La fecha no es válida.'),
+    handleInputErrors,
+    OrderController.getSalesByDate
+);
 
 router.get('/', OrderController.getAllOrders)
 
