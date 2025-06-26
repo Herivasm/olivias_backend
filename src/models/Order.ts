@@ -28,6 +28,7 @@ export interface IOrder extends Document {
     products: OrderItem[],
     paymentMethod: OrderPaymentMethod,
     status: OrderStatus
+    paidAt?: Date
 }
 
 const OrderSchema: Schema = new Schema({
@@ -73,6 +74,9 @@ const OrderSchema: Schema = new Schema({
         type: String,
         required: true,
         enum: Object.values(paymentMethod),
+    },
+    paidAt: {
+        type: Date
     }
 }, { timestamps: true })
 
