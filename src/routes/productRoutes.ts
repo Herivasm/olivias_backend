@@ -10,14 +10,13 @@ router.post('/',
     body('productName')
         .notEmpty().withMessage('El nombre del producto no puede ir vacío'),
     body('price')
-        .notEmpty().withMessage('El precio no puede ir vacío')
         .isFloat({ gt: 0 }).withMessage('El precio debe ser un número mayor a 0'),
     body('cost')
-        .notEmpty().withMessage('El costo no puede ir vacío')
         .isFloat({ gt: 0 }).withMessage('El costo debe ser un número mayor a 0'),
     body('description')
         .notEmpty().withMessage('La descripción del producto no puede ir vacía'),
     body('photoUrl')
+        .optional()
         .isURL().withMessage('La URL de la foto no es válida'),
     body('category')
         .notEmpty().withMessage('La categoría es obligatoria')
@@ -39,11 +38,9 @@ router.put('/:productId',
         .notEmpty().withMessage('El nombre del producto no puede ir vacío'),
     body('price')
         .optional()
-        .isFloat({ gt: 0 }).withMessage('El precio debe ser un número mayor a 0')
-        .notEmpty().withMessage('El precio del producto no puede ir vacío'),
+        .isFloat({ gt: 0 }).withMessage('El precio debe ser un número mayor a 0'),
     body('cost')
         .optional()
-        .notEmpty().withMessage('El costo no puede ir vacío')
         .isFloat({ gt: 0 }).withMessage('El costo debe ser un número mayor a 0'),
     body('description')
         .optional()
@@ -65,4 +62,5 @@ router.delete('/:productId',
         .isMongoId().withMessage('ID no válido'),
     handleInputErrors, ProductController.deleteProduct
 )
+
 export default router
