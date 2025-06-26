@@ -87,7 +87,12 @@ export class OrderController {
 
             const { products, notes, status, paymentMethod } = req.body;
 
-            if (status !== undefined) order.status = status;
+            if (status !== undefined) {
+                if (order.status === 'pending' && status === 'paid') {
+                    order.paidAt = new Date();
+                }
+                order.status = status;
+            }
             if (paymentMethod !== undefined) order.paymentMethod = paymentMethod;
             if (notes !== undefined) order.notes = notes;
 
@@ -116,7 +121,7 @@ export class OrderController {
             const populatedOrder = await order.populate('products.product');
 
             res.status(200).json({ message: 'Orden actualizada', order: populatedOrder });
-            
+
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Error al actualizar la orden' });
@@ -135,7 +140,40 @@ export class OrderController {
 
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Error al eliminar la orden' }); // <-- 2. Manejo de error corregido
+            res.status(500).json({ error: 'Error al eliminar la orden' });
+        }
+    }
+
+    static getSalesByDate = async (req: Request, res: Response) => {
+        const date = req.query.date as string;
+
+        try {
+            const startOfDay = new Date(`${date}T00:00:00.000Z`);
+            const endOfDay = new Date(`${date}T23:59:59.999Z`);
+
+            const filter = {
+                createdAt: { $gte: startOfDay, $lte: endOfDay },
+                status: 'paid'
+            };
+
+            const ordersOfTheDay = await Order.find(filter).populate('products.product');
+
+            const totalSales = ordersOfTheDay.reduce((sum, order) => sum + order.total, 0);
+            const cashSales = ordersOfTheDay
+                .filter(order => order.paymentMethod === 'cash')
+                .reduce((sum, order) => sum + order.total, 0);
+            const transactionSales = totalSales - cashSales;
+
+            const response = {
+                summary: { totalSales, cashSales, transactionSales, orderCount: ordersOfTheDay.length },
+                orders: ordersOfTheDay
+            };
+
+            res.json(response);
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Error al obtener el reporte de ventas' });
         }
     }
 }
