@@ -8,7 +8,6 @@ export class CashClosingController {
         const { initialFund, notes, closingDate } = req.body;
 
         try {
-            // --- CORRECCIÓN DE ZONA HORARIA Y VALIDACIÓN DE DUPLICADOS ---
             const dateObj = new Date(closingDate);
             const startOfDayForCheck = new Date(dateObj.setHours(0, 0, 0, 0));
             const endOfDayForCheck = new Date(dateObj.setHours(23, 59, 59, 999));
@@ -22,13 +21,12 @@ export class CashClosingController {
                 return;
             }
 
-            // --- CORRECCIÓN DE ZONA HORARIA PARA LA BÚSQUEDA ---
             const startOfDay = new Date(`${closingDate}T00:00:00.000Z`);
             const endOfDay = new Date(`${closingDate}T23:59:59.999Z`);
 
             const ordersOfTheDay = await Order.find({
                 createdAt: { $gte: startOfDay, $lte: endOfDay },
-                // status: 'paid' // Descomentar cuando implementes el cambio de estado
+                status: 'paid' // Descomentar cuando implementes el cambio de estado
             });
 
             const totalSales = ordersOfTheDay.reduce((sum, order) => sum + order.total, 0);
@@ -40,7 +38,7 @@ export class CashClosingController {
             const finalBalance = totalSales;
 
             const cashClosing = new CashClosing({
-                closingDate: startOfDay, // Guardamos la fecha normalizada para consistencia
+                closingDate: startOfDay, 
                 initialFund,
                 notes,
                 totalSales,
