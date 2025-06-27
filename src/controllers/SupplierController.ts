@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import Supplier from "../models/Supplier";
+import Supply from "../models/Supply";
 
 export class SupplierController {
     static createSupplier = async (req: Request, res: Response) => {
@@ -36,7 +37,14 @@ export class SupplierController {
                 return
             }
 
-            res.json(supplier)
+            const supplies = await Supply.find({ supplier: supplierId })
+
+            const supplierWithSupplies = {
+                ...supplier.toObject(),
+                supplies: supplies
+            }
+
+            res.json(supplierWithSupplies)
 
         } catch (error) {
             console.log(error);
@@ -60,7 +68,6 @@ export class SupplierController {
 
             await supplier.save()
             res.send('Proveedor actualizado')
-
 
         } catch (error) {
             console.log(error);

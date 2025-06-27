@@ -1,15 +1,22 @@
 import mongoose, { Document, PopulatedDoc, Schema, Types } from "mongoose";
 import { IProduct } from "./Product";
 
-const orderStatus = {
+export const orderStatus = {
     PENDING: 'pending',
     PAID: 'paid',
 } as const
 
 export type OrderStatus = typeof orderStatus[keyof typeof orderStatus]
 
+export const paymentMethod = {
+    CASH: 'cash',
+    TRANSACTION: 'transaction'
+} as const
+
+export type OrderPaymentMethod = typeof paymentMethod[keyof typeof paymentMethod]
+
 interface OrderItem {
-    product: PopulatedDoc<IProduct>[]
+    product: PopulatedDoc<IProduct>
     quantity: number
     unitPrice: number
 }
@@ -18,8 +25,10 @@ export interface IOrder extends Document {
     orderNumber: string
     notes?: string
     total: number
-    products: OrderItem[]
+    products: OrderItem[],
+    paymentMethod: OrderPaymentMethod,
     status: OrderStatus
+    paidAt?: Date
 }
 
 const OrderSchema: Schema = new Schema({
@@ -60,6 +69,14 @@ const OrderSchema: Schema = new Schema({
         type: String,
         enum: Object.values(orderStatus),
         default: orderStatus.PENDING
+    },
+    paymentMethod: {
+        type: String,
+        required: true,
+        enum: Object.values(paymentMethod),
+    },
+    paidAt: {
+        type: Date
     }
 }, { timestamps: true })
 
