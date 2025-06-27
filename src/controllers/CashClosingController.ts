@@ -26,7 +26,6 @@ export class CashClosingController {
 
             const ordersOfTheDay = await Order.find({
                 createdAt: { $gte: startOfDay, $lte: endOfDay },
-                status: 'paid' // Descomentar cuando implementes el cambio de estado
             });
 
             const totalSales = ordersOfTheDay.reduce((sum, order) => sum + order.total, 0);
