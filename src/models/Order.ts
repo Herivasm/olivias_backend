@@ -16,18 +16,21 @@ export const paymentMethod = {
 export type OrderPaymentMethod = typeof paymentMethod[keyof typeof paymentMethod]
 
 interface OrderItem {
-    product: PopulatedDoc<IProduct>
+    productId: Types.ObjectId
+    productName: string
+    price: number
+    cost: number
     quantity: number
-    unitPrice: number
+    _id: Types.ObjectId
 }
 
 export interface IOrder extends Document {
     orderNumber: string
     notes?: string
     total: number
-    products: OrderItem[],
-    paymentMethod: OrderPaymentMethod,
-    status: OrderStatus
+    products: OrderItem[]
+    paymentMethod: 'cash' | 'transaction'
+    status: 'pending' | 'paid'
     paidAt?: Date
 }
 
@@ -49,20 +52,26 @@ const OrderSchema: Schema = new Schema({
         min: 0
     },
     products: [{
-        product: {
+        productId: {
             type: Schema.Types.ObjectId,
             ref: 'Product',
             required: true
         },
+        productName: {
+            type: String,
+            required: true
+        },
+        price: {
+            type: Number,
+            required: true,
+        },
+        cost: {
+            type: Number,
+            required: true,
+        },
         quantity: {
             type: Number,
             required: true,
-            min: 1
-        },
-        unitPrice: {
-            type: Number,
-            required: true,
-            min: 0
         }
     }],
     status: {
