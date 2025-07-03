@@ -37,7 +37,9 @@ export class SupplierController {
                 return
             }
 
-            const supplies = await Supply.find({ supplier: supplierId })
+            // ✅ **CORRECCIÓN AQUÍ**
+            // Se busca el 'supplierId' dentro del arreglo 'suppliers' de cada insumo.
+            const supplies = await Supply.find({ suppliers: supplierId })
 
             const supplierWithSupplies = {
                 ...supplier.toObject(),

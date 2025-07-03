@@ -4,7 +4,7 @@ export interface ISupply extends Document {
     supplyName: string
     stock: number
     measure: string
-    supplier: Types.ObjectId
+    suppliers: Types.ObjectId[]
 }
 
 const SupplySchema: Schema = new Schema({
@@ -23,10 +23,10 @@ const SupplySchema: Schema = new Schema({
         required: true,
         min: 0
     },
-    supplier: {
+    suppliers: [{
         type: Types.ObjectId,
         ref: 'Supplier'
-    }
+    }]
 })
 
 const Supply = mongoose.model<ISupply>('Supply', SupplySchema)

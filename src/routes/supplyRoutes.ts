@@ -37,8 +37,10 @@ router.put('/:supplyId',
         .notEmpty().withMessage('La unidad de medida no puede ir vacía'),
     body('stock')
         .isNumeric().withMessage('El stock debe ser un número'),
-    body('supplier')
-        .isMongoId().withMessage('ID del proveedor no válido'),
+    body('suppliers')
+        .isArray({ min: 1 }).withMessage('Debe haber al menos un proveedor'),
+    body('suppliers.*')
+        .isMongoId().withMessage('ID de proveedor no válido en la lista'),
     handleInputErrors,
     SupplyController.updateSupply
 )
