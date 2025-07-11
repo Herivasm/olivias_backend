@@ -15,7 +15,7 @@ connectDB()
 const app = express()
 
 app.use(cors({
-    origin: "https://olivias-frontend-v9vk.vercel.app"
+    origin: "https://olivias-frontend-v9vk-git-main-heriberto-yanezs-projects.vercel.app"
 }))
 
 app.use(express.json())
