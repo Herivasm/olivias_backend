@@ -25,7 +25,7 @@ app.use('/products', productRoutes)
 app.use("/orders", orderRoutes)
 app.use('/suppliers', supplierRoutes)
 app.use('/supplies', supplyRoutes)
-app.use('/api/cash-closings', cashClosingRoutes)
-app.use('/api/auth', authRoutes);
+app.use('/cash-closings', cashClosingRoutes)
+app.use('/auth', authRoutes);
 
 export default app
