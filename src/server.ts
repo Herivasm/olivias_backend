@@ -21,10 +21,10 @@ app.use(cors({
 app.use(express.json())
 
 // Routes
-app.use('/api/products', productRoutes)
-app.use("/api/orders", orderRoutes)
-app.use('/api/suppliers', supplierRoutes)
-app.use('/api/supplies', supplyRoutes)
+app.use('/products', productRoutes)
+app.use("/orders", orderRoutes)
+app.use('/suppliers', supplierRoutes)
+app.use('/supplies', supplyRoutes)
 app.use('/api/cash-closings', cashClosingRoutes)
 app.use('/api/auth', authRoutes);
 
